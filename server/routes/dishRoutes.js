@@ -1,20 +1,12 @@
 import express from 'express';
-import upload from '../middlewares/upload.js';
-import { 
-    createDish, 
-    getAllDishes, 
-    updateDish, 
-    deleteDish 
-} from '../controllers/dishController.js';
+import { createDish, getAllDishes, updateDish, deleteDish, getById } from '../controllers/dishController.js';
 
 const dishRouter = express.Router();
 
-dishRouter.post('/', upload.single('img'), createDish);
-
+dishRouter.post('/', createDish);
 dishRouter.get('/', getAllDishes);
-
-dishRouter.put('/:id', upload.single('img'), updateDish);
-
+dishRouter.get('/:id', getById);
+dishRouter.put('/:id', updateDish);
 dishRouter.delete('/:id', deleteDish);
 
 export default dishRouter;
