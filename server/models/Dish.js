@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const dishSchema = new mongoose.Schema({
     dishname: {
@@ -6,19 +6,12 @@ const dishSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
-
-    ingredients: {
-        type: [String],
-        required: true
-    },
-
+    ingredients: [{
+        name: { type: String, required: true },
+        calories: { type: Number, required: true }
+    }],
     quantity: {
         type: Number,
-        required: true,
-    },
-
-    img: {
-        type: String,
         required: true,
     }
 }, {

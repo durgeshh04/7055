@@ -2,23 +2,16 @@ import Dish from "../models/Dish.js";
 
 export const createDish = async (req, res) => {
     const { dishname, ingredients, quantity } = req.body;
-    
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'Image is required' });
-        }
 
+    try {
         if (!dishname || !ingredients || !quantity) {
             return res.status(400).json({ message: 'Provide all details' });
         }
 
-        const img = `/uploads/${req.file.filename}`;
-
         const newDish = new Dish({
             dishname,
-            ingredients: Array.isArray(ingredients) ? ingredients : JSON.parse(ingredients),
-            quantity,
-            img
+            ingredients,
+            quantity
         });
 
         await newDish.save();
@@ -52,23 +45,11 @@ export const getById = async (req, res) => {
 export const updateDish = async (req, res) => {
     const { id } = req.params;
     const { dishname, ingredients, quantity } = req.body;
-    
+
     try {
-        const updateData = {
-            dishname,
-            ingredients: Array.isArray(ingredients) ? ingredients : JSON.parse(ingredients),
-            quantity
-        };
+        const updateData = { dishname, ingredients, quantity };
 
-        if (req.file) {
-            updateData.img = `/uploads/${req.file.filename}`;
-        }
-
-        const updatedDish = await Dish.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true }
-        );
+        const updatedDish = await Dish.findByIdAndUpdate(id, updateData, { new: true });
 
         if (!updatedDish) {
             return res.status(404).json({ message: 'Dish not found' });
@@ -82,10 +63,10 @@ export const updateDish = async (req, res) => {
 
 export const deleteDish = async (req, res) => {
     const { id } = req.params;
-    
+
     try {
         const deletedDish = await Dish.findByIdAndDelete(id);
-        
+
         if (!deletedDish) {
             return res.status(404).json({ message: 'Dish not found' });
         }
