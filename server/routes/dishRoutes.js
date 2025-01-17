@@ -4,7 +4,8 @@ import {
     createDish, 
     getAllDishes, 
     updateDish, 
-    deleteDish 
+    deleteDish, 
+    getById
 } from '../controllers/dishController.js';
 
 const dishRouter = express.Router();
@@ -12,6 +13,8 @@ const dishRouter = express.Router();
 dishRouter.post('/', upload.single('img'), createDish);
 
 dishRouter.get('/', getAllDishes);
+
+dishRouter.get('/:id', getById);
 
 dishRouter.put('/:id', upload.single('img'), updateDish);
 

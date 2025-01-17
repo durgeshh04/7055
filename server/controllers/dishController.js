@@ -1,23 +1,23 @@
-import Dish from "../models/Dish.js";  // Fix: Added .js extension
+import Dish from "../models/Dish.js";
 
 export const createDish = async (req, res) => {
-    const { dishname, ingredients } = req.body;
+    const { dishname, ingredients, quantity } = req.body;
     
     try {
         if (!req.file) {
             return res.status(400).json({ message: 'Image is required' });
         }
 
-        if (!dishname || !ingredients) {
+        if (!dishname || !ingredients || !quantity) {
             return res.status(400).json({ message: 'Provide all details' });
         }
 
-        // Fix: Store the path relative to the uploads directory
         const img = `/uploads/${req.file.filename}`;
 
         const newDish = new Dish({
             dishname,
             ingredients: Array.isArray(ingredients) ? ingredients : JSON.parse(ingredients),
+            quantity,
             img
         });
 
@@ -37,14 +37,27 @@ export const getAllDishes = async (req, res) => {
     }
 };
 
+export const getById = async (req, res) => {
+    try {
+        const dish = await Dish.findById(req.params.id);
+        if (!dish) {
+            return res.status(404).json({ message: 'Dish not found' });
+        }
+        res.status(200).json({ data: dish });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch dish details', error: error.message });
+    }
+};
+
 export const updateDish = async (req, res) => {
     const { id } = req.params;
-    const { dishname, ingredients } = req.body;
+    const { dishname, ingredients, quantity } = req.body;
     
     try {
         const updateData = {
             dishname,
-            ingredients: Array.isArray(ingredients) ? ingredients : JSON.parse(ingredients)
+            ingredients: Array.isArray(ingredients) ? ingredients : JSON.parse(ingredients),
+            quantity
         };
 
         if (req.file) {

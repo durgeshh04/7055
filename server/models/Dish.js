@@ -12,6 +12,11 @@ const dishSchema = new mongoose.Schema({
         required: true
     },
 
+    quantity: {
+        type: Number,
+        required: true,
+    },
+
     img: {
         type: String,
         required: true,
