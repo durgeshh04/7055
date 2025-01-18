@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { createDish } from "../services/api";
+import { useState, useEffect } from "react";
+import { createDish, updateDish } from "../services/api";
+import { toast } from "react-toastify";
 
-const AddDish = ({ onClose }) => {
+const AddDish = ({ dishData, onClose }) => {
   const [dishName, setDishName] = useState("");
   const [ingredients, setIngredients] = useState([{ name: "", calories: 0 }]);
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    if (dishData) {
+      setDishName(dishData.dishname);
+      setIngredients(dishData.ingredients);
+      setQuantity(dishData.quantity);
+    }
+  }, [dishData]);
 
   const handleAddIngredient = () => {
     setIngredients([...ingredients, { name: "", calories: 0 }]);
@@ -25,16 +34,24 @@ const AddDish = ({ onClose }) => {
     e.preventDefault();
     try {
       const data = { dishname: dishName, ingredients, quantity };
-      await createDish(data);
-      onClose(); // Close the modal after submission
+      if (dishData) {
+        // Update existing dish
+        await updateDish(dishData._id, data);
+        toast.success("Dish updated successfully!");
+      } else {
+        // Create new dish
+        await createDish(data);
+        toast.success("Dish added successfully!");
+      }
+      onClose(); 
     } catch (error) {
-      console.error("Error adding dish:", error);
+      toast.error("Error saving dish.");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4">
-      <h1 className="text-2xl mb-4">Add a New Dish</h1>
+    <form onSubmit={handleSubmit} className="bg-black p-4">
+      <h1 className="text-2xl mb-4">{dishData ? "Edit Dish" : "Add a New Dish"}</h1>
       <div className="mb-4">
         <label className="block text-sm font-bold mb-2">Dish Name</label>
         <input
@@ -101,7 +118,7 @@ const AddDish = ({ onClose }) => {
         type="submit"
         className="mt-6 bg-green-600 px-4 py-2 rounded w-full"
       >
-        Save Dish
+        {dishData ? "Update Dish" : "Save Dish"}
       </button>
     </form>
   );

@@ -9,11 +9,11 @@ const QRGenerator = ({ dish, quantities, totalCalories }) => {
       quantity: quantities[idx],
       calories: (item.calories || 0) * (quantities[idx] || 1),
     })),
-    totalCalories: totalCalories,
+    totalCalories,
   };
 
   const handleDownload = async () => {
-    const qrElement = document.getElementById("qr-code"); // Make sure the id matches your QR code element
+    const qrElement = document.getElementById("qr-code");
     if (qrElement) {
       const dataUrl = await toPng(qrElement);
       const link = document.createElement("a");
@@ -24,16 +24,25 @@ const QRGenerator = ({ dish, quantities, totalCalories }) => {
   };
 
   return (
-    <div className="mt-6 p-6 bg-gray-800 text-white rounded-lg shadow-md flex flex-col items-center">
-      <h3 className="text-lg font-semibold mb-4">Scan QR Code:</h3>
-      <div id="qr-code" className="p-4 bg-gray-700 shadow-md rounded-md inline-block">
+    <div className="p-6 rounded-lg shadow-md flex flex-col items-center space-y-4">
+      <h3 className="text-xl font-bold text-white-800">Scan QR Code:</h3>
+      <div
+        id="qr-code"
+        className="p-4 bg-gray-100 shadow rounded-md inline-block"
+      >
         <QRCode value={JSON.stringify(qrData)} />
       </div>
       <button
         onClick={handleDownload}
-        className="mt-4 py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
       >
         Download QR Code
+      </button>
+      <button
+        onClick={() => navigator.clipboard.writeText(JSON.stringify(qrData))}
+        className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition"
+      >
+        Copy QR Data to Clipboard
       </button>
     </div>
   );
