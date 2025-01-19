@@ -27,11 +27,25 @@ const EagleAi = () => {
         calorieGoal: "500", 
       });
 
-      // Add AI's response to chat
-      setMessages([...messages, { text: userMessage, isAI: false }, { text: data.suggestions, isAI: true }]);
+      // Handle AI's response (expecting an array of dish suggestions)
+      const suggestions = data.suggestions || [];
+      
+      // Format the suggestions in a way that it will display properly
+      setMessages([
+        ...messages, 
+        { text: userMessage, isAI: false },
+        {
+          text: suggestions.map(dish => `• ${dish.text}`).join('\n'),
+          isAI: true
+        }
+      ]);
     } catch (error) {
       toast.error("Error fetching AI response.");
       console.error("Error with AI suggestion:", error);
+      setMessages([
+        ...messages, 
+        { text: "Sorry, there was an error fetching dish suggestions.", isAI: true }
+      ]);
     } finally {
       setLoading(false);
     }
@@ -48,9 +62,7 @@ const EagleAi = () => {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`max-w-[80%] p-3 rounded-lg ${
-              message.isAI ? "bg-blue-600 self-start" : "bg-gray-800 self-end"
-            }`}
+            className={`max-w-[80%] p-3 rounded-lg ${message.isAI ? "bg-blue-600 self-start" : "bg-gray-800 self-end"}`}
           >
             <p>{message.text}</p>
           </div>
