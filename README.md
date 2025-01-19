@@ -1,8 +1,8 @@
-## Restaurant Server API
+## Restaurant Management System
 
-This is the backend server for a hackathon.
+This is a full-stack application built for a hackathon.
 
-### Installation
+### Backend Installation
 
 1. Clone the repository
 
@@ -18,6 +18,22 @@ npm install
 npm start
 
 The server will start running on `http://localhost:3000`
+
+### Frontend Installation
+
+1. Navigate to frontend directory
+
+cd client
+
+2. Install dependencies
+
+npm install
+
+3. Start the development server
+
+npm start
+
+The frontend will start running on `http://localhost:5173`
 
 ### API Endpoints
 
@@ -65,24 +81,41 @@ MONGODB_URI=your_mongodb_connection_string
 
 ### Tech Stack
 
+Backend:
 - Node.js
 - Express.js
 - MongoDB
 - Mongoose
 
+Frontend:
+- React.js
+- Axios
+- React Router
+
 ### Project Structure
 
-server/
-├── config/
-│ └── db.js
-├── models/
-│ └── dish.model.js
-├── routes/
-│ └── dish.routes.js
-├── controllers/
-│ └── dish.controller.js
-├── middleware/
-│ └── auth.middleware.js
-├── .env
-├── package.json
-└── server.js
+project/
+├── client/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── App.js
+│   │   └── index.js
+│   └── package.json
+│
+├── server/
+│   ├── config/
+│   │   └── db.js
+│   ├── models/
+│   │   └── dish.model.js
+│   ├── routes/
+│   │   └── dish.routes.js
+│   ├── controllers/
+│   │   └── dish.controller.js
+│   ├── middleware/
+│   │   └── auth.middleware.js
+│   ├── .env
+│   ├── package.json
+│   └── server.js
