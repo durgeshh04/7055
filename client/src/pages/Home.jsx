@@ -5,7 +5,7 @@ import AddDish from "../components/AddDish";
 import { toast } from "react-toastify"; 
 const Home = () => {
   const [dishes, setDishes] = useState([]);
-  const [filteredDishes, setFilteredDishes] = useState([]); // For search and pagination
+  const [filteredDishes, setFilteredDishes] = useState([]); 
   const [showAddDishModal, setShowAddDishModal] = useState(false);
   const [editDishData, setEditDishData] = useState(null); // Store data for editing a dish
   const [searchQuery, setSearchQuery] = useState(""); // Search input
