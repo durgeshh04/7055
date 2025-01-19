@@ -1,4 +1,4 @@
-## Restaurant Management System
+## Project-5
 
 This is a full-stack application built for a hackathon.
 
