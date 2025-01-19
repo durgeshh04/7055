@@ -2,24 +2,40 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getAllDishes, deleteDish } from "../services/api";
 import AddDish from "../components/AddDish";
-import { toast } from "react-toastify"; // Import toast for notifications
-
+import { toast } from "react-toastify"; 
 const Home = () => {
   const [dishes, setDishes] = useState([]);
+  const [filteredDishes, setFilteredDishes] = useState([]); // For search and pagination
   const [showAddDishModal, setShowAddDishModal] = useState(false);
   const [editDishData, setEditDishData] = useState(null); // Store data for editing a dish
+  const [searchQuery, setSearchQuery] = useState(""); // Search input
+  const [currentPage, setCurrentPage] = useState(1); // Pagination current page
+  const itemsPerPage = 6; // Number of items per page
 
   useEffect(() => {
     const fetchDishes = async () => {
       try {
         const { data } = await getAllDishes();
         setDishes(data.data);
+        setFilteredDishes(data.data); // Initialize filtered dishes
       } catch (error) {
         console.error("Failed to fetch dishes:", error);
+        toast.error("Failed to fetch dishes");
       }
     };
     fetchDishes();
   }, []);
+
+  const handleSearch = (e) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+
+    const filtered = dishes.filter((dish) =>
+      dish.dishname.toLowerCase().includes(query)
+    );
+    setFilteredDishes(filtered);
+    setCurrentPage(1); // Reset to the first page when searching
+  };
 
   const handleOpenModal = (dish = null) => {
     setEditDishData(dish); // If dish is provided, it's for editing, else it's for creating a new dish
@@ -36,12 +52,25 @@ const Home = () => {
     if (confirmed) {
       try {
         await deleteDish(id);
-        setDishes(dishes.filter(dish => dish._id !== id));
+        const updatedDishes = dishes.filter((dish) => dish._id !== id);
+        setDishes(updatedDishes);
+        setFilteredDishes(updatedDishes);
         toast.success("Dish deleted successfully!"); // Toast for successful deletion
       } catch (error) {
         toast.error("Failed to delete the dish.");
       }
     }
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredDishes.length / itemsPerPage);
+  const paginatedDishes = filteredDishes.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -51,33 +80,68 @@ const Home = () => {
           Add Dishes & Check Calories 🍴
         </h1>
 
+        {/* Search Bar */}
+        <div className="mb-8">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Search dishes..."
+            className="w-1/3 p-2 rounded-lg border-2 border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 text-black"
+          />
+        </div>
+
+        {/* Dish List */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {dishes.map((dish) => (
-            <div
-              key={dish._id}
-              className="bg-white p-6 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-xl"
-            >
-              <Link
-                to={`/dish/${dish._id}`}
-                className="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition"
+          {paginatedDishes.length > 0 ? (
+            paginatedDishes.map((dish) => (
+              <div
+                key={dish._id}
+                className="bg-white p-6 rounded-lg shadow-lg transform transition duration-500 hover:scale-105 hover:shadow-xl"
               >
-                {dish.dishname}
-              </Link>
-              <div className="mt-4 flex justify-end space-x-4">
-                <button
-                  onClick={() => handleOpenModal(dish)} // Edit existing dish
-                  className="text-blue-600 hover:text-blue-800"
+                <Link
+                  to={`/dish/${dish._id}`}
+                  className="text-2xl font-semibold text-gray-800 hover:text-blue-600 transition"
                 >
-                  ✏️
-                </button>
-                <button
-                  onClick={() => handleDeleteDish(dish._id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  🗑️
-                </button>
+                  {dish.dishname}
+                </Link>
+                <div className="mt-4 flex justify-end space-x-4">
+                  <button
+                    onClick={() => handleOpenModal(dish)} // Edit existing dish
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    onClick={() => handleDeleteDish(dish._id)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    🗑️
+                  </button>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="col-span-3 text-center text-white text-xl">
+              No dishes available for your search
             </div>
+          )}
+        </div>
+
+        {/* Pagination */}
+        <div className="mt-8 flex justify-center items-center space-x-2">
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              onClick={() => handlePageChange(index + 1)}
+              className={`px-4 py-2 rounded-lg ${
+                currentPage === index + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+              }`}
+            >
+              {index + 1}
+            </button>
           ))}
         </div>
       </div>
