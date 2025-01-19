@@ -48,7 +48,7 @@ const Home = () => {
     <div className="relative p-8 min-h-screen bg-gray-800">
       <div className={`${showAddDishModal ? "filter blur-md" : ""} transition-all duration-300`}>
         <h1 className="text-5xl font-extrabold text-center text-white-800 mb-10">
-          Explore Delicious Dishes 🍴
+          Add Dishes & Check Calories 🍴
         </h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -104,6 +104,13 @@ const Home = () => {
       >
         +
       </button>
+
+      {/* Link to EagleAi page */}
+      <Link to="/eagle-ai">
+        <button className="fixed bottom-6 left-6 bg-green-600 text-white rounded-full p-5 shadow-lg hover:bg-green-700 text-3xl transition">
+          AI
+        </button>
+      </Link>
     </div>
   );
 };
