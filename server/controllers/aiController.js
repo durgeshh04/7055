@@ -79,9 +79,15 @@ export const getDishSuggestions = async (req, res) => {
         if (response && response.candidates && response.candidates[0] && response.candidates[0].content && response.candidates[0].content.parts && response.candidates[0].content.parts[0].text) {
             const suggestions = response.candidates[0].content.parts[0].text.trim();  // Access the first part's text
 
-            // If necessary, clean up the suggestions
-            const dishList = suggestions.split('\n').map(dish => dish.trim()).filter(dish => dish !== '');
-            
+            // Split the response into an array of individual dishes
+            const dishList = suggestions.split('\n').map(dish => {
+                return {
+                    text: dish.trim(),
+                    // Add more properties if needed for better structure
+                };
+            }).filter(dish => dish.text !== '');  // Remove any empty dishes
+
+            // Ensure the response is structured as an array of dishes
             return res.status(200).json({ suggestions: dishList });
         } else {
             console.error("Unexpected Gemini API response:", response);
